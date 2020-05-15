@@ -61,7 +61,6 @@ class RaidBossSimulation1 extends Simulation {
               for (
                 playerId <- session("playerId").validate[String]
               ) yield RaidBossAttack(instanceId, playerId, Math.abs(RNG.nextLong()%19) + 1))
-              .extract(rbi => Some(rbi.health))(h => h.saveAs("rbiHealth"))
           )
     }
     .exec(
