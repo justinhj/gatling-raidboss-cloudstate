@@ -2,6 +2,8 @@ package shoppingcart
 
 import io.gatling.core.Predef._
 import io.gatling.http.Predef._
+import io.gatling.app.Gatling
+import io.gatling.core.config.GatlingPropertiesBuilder
 import scala.concurrent.duration._
 import io.grpc.ManagedChannelBuilder
 import com.github.phisgr.gatling.grpc.Predef._
@@ -75,4 +77,15 @@ class ShoppingCartSimulation1 extends Simulation {
     }
 
   setUp(scn.inject(rampUsers(numUsers) during (30 seconds)).protocols(grpcConf))
+}
+
+object ShoppingCartRunner {
+  def main(args: Array[String]) {
+    // This sets the class for the simulation we want to run.
+    val simClass = classOf[ShoppingCartSimulation1].getName
+    val props = new GatlingPropertiesBuilder
+    props.binariesDirectory("./target/scala-2.12/classes")
+    props.simulationClass(simClass)
+    Gatling.fromMap(props.build)
+  }
 }

@@ -38,12 +38,12 @@ Run the shopping cart simulation from sbt
 -----------------------------------------
 
 ```bash
-> gatling-it:testOnly shoppingcart.ShoppingCartSimulation1
+sbt "gatling-it:testOnly shoppingcart.ShoppingCartSimulation1"
 ```
 
-Run the shopping cart simulation at the command line and direct to a particular server...
+Run the shopping cart simulation at the command line and direct to a particular server. Note that if you are running the shopping cart service in Kubernetes cluster, you need to port forward from the akka-sidecar container so you can access it directly with the load test. (The load test uses gRPC not grpc-web protocol).
 
-```
+```bash
 GATLING_PORT=[PORT] GATLING_USERS=[NUM USERS] GATLING_HOST=[YOUR HOST] sbt gatling-it:testOnly shoppingcart.ShoppingCartSimulation1
 ```
 
