@@ -37,7 +37,14 @@ class FriendsSimulation1 extends Simulation {
          .payload(session =>
               for (
                 user <- session("name").validate[String]
-              ) yield FriendRequest(user, Some(Friend("bob")))))
+              ) yield FriendRequest(user, Some(Friend("Bob")))))
+    .exec(
+      grpc("Add Friend")
+        .rpc(FriendsGrpc.METHOD_ADD)
+         .payload(session =>
+              for (
+                user <- session("name").validate[String]
+              ) yield FriendRequest(user, Some(Friend("Lisa")))))
     .exec(
       grpc("Get Friends")
         .rpc(FriendsGrpc.METHOD_GET_FRIENDS)
@@ -47,10 +54,35 @@ class FriendsSimulation1 extends Simulation {
               ) yield User(user))
         .extract(friends => Some(friends))(fl => fl.saveAs("friends")))
     .exec(session => {
+        val fl = session("friends").as[FriendsList]
+        println(fl)
+        session
+      })
+    .exec(
+      grpc("Remove Friend")
+        .rpc(FriendsGrpc.METHOD_REMOVE)
+         .payload(session =>
+              for (
+                user <- session("name").validate[String]
+              ) yield FriendRequest(user, Some(Friend("Lisa")))))
+    .exec(session => {
       val fl = session("friends").as[FriendsList]
       println(fl)
       session
     })
+    .exec(
+      grpc("Get Friends")
+        .rpc(FriendsGrpc.METHOD_GET_FRIENDS)
+        .payload(session =>
+              for (
+                user <- session("name").validate[String]
+              ) yield User(user))
+        .extract(friends => Some(friends))(fl => fl.saveAs("friends")))
+    .exec(session => {
+        val fl = session("friends").as[FriendsList]
+        println(fl)
+        session
+      })
 
   setUp(scn.inject(rampUsers(numUsers) during (30 seconds)).protocols(grpcConf))
 }
